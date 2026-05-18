@@ -1,0 +1,17 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+*.log
+*.key
+*.pem
+*.p12
+*.keystore
+secrets/
+

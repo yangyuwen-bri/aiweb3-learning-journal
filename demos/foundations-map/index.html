@@ -462,7 +462,6 @@
         </div>
         <div class="toolbar">
           <button class="action primary" id="startBtn">开始复习</button>
-          <button class="action" id="copyBtn">复制打卡摘要</button>
           <button class="action" id="resetBtn">重置进度</button>
         </div>
       </header>
@@ -675,14 +674,6 @@
         window.setTimeout(() => toast.classList.remove("show"), 1600);
       }
 
-      function copySummary() {
-        const summary = `今天在昨天课程 PPT 笔记的基础上，做了一个交互式 HTML 学习工具：AI x Web3 基础能力地图。它把课程核心内容拆成 7 个可点击知识节点：AI 协作边界、Web3 工程系统、区块链状态机、钱包与账户控制、钱包安全风险、Web3 交易参数、架构师能力模型。这个 demo 的目标不是做展示页，而是把 Markdown 笔记进一步产品化成可复习、可自测、可沉淀的 proof-of-work。`;
-        navigator.clipboard.writeText(summary).then(
-          () => showToast("打卡摘要已复制"),
-          () => showToast("复制失败，请手动复制")
-        );
-      }
-
       mapList.addEventListener("click", event => {
         const button = event.target.closest("[data-index]");
         if (!button) return;
@@ -706,8 +697,6 @@
         renderConcept();
         document.querySelector(".concept").scrollIntoView({ behavior: "smooth", block: "start" });
       });
-
-      document.querySelector("#copyBtn").addEventListener("click", copySummary);
 
       document.querySelector("#resetBtn").addEventListener("click", () => {
         state.checked = [];

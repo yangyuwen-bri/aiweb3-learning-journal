@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI x Web3 基础能力地图</title>
+    <style>
+      :root {
+        --ink: #171717;
+        --paper: #f7f2e8;
+        --panel: #fffaf0;
+        --line: #202020;
+        --teal: #00b7a8;
+        --red: #f2553d;
+        --blue: #3457d5;
+        --yellow: #f4c74a;
+        --muted: #706d66;
+        --shadow: 10px 10px 0 #171717;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          linear-gradient(90deg, rgba(23, 23, 23, 0.06) 1px, transparent 1px),
+          linear-gradient(rgba(23, 23, 23, 0.06) 1px, transparent 1px),
+          radial-gradient(circle at 15% 12%, rgba(0, 183, 168, 0.24), transparent 28%),
+          radial-gradient(circle at 86% 8%, rgba(242, 85, 61, 0.2), transparent 26%),
+          var(--paper);
+        background-size: 28px 28px, 28px 28px, auto, auto, auto;
+        font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", sans-serif;
+        letter-spacing: 0;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .app {
+        width: min(1440px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 28px 0 40px;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 22px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        padding: 7px 10px;
+        border: 2px solid var(--line);
+        background: var(--yellow);
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        box-shadow: 4px 4px 0 var(--line);
+      }
+
+      h1 {
+        margin: 14px 0 8px;
+        max-width: 860px;
+        font-family: Georgia, "Songti SC", serif;
+        font-size: clamp(36px, 7vw, 86px);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        max-width: 800px;
+        margin: 0;
+        color: #3c3934;
+        font-size: clamp(16px, 2vw, 20px);
+        line-height: 1.7;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .action {
+        min-height: 42px;
+        padding: 10px 14px;
+        border: 2px solid var(--line);
+        background: var(--panel);
+        color: var(--ink);
+        box-shadow: 5px 5px 0 var(--line);
+        cursor: pointer;
+        font-weight: 800;
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      .action:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 3px 3px 0 var(--line);
+        background: #fff;
+      }
+
+      .action.primary {
+        background: var(--teal);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr) 330px;
+        gap: 18px;
+        align-items: start;
+      }
+
+      .panel {
+        border: 3px solid var(--line);
+        background: rgba(255, 250, 240, 0.94);
+        box-shadow: var(--shadow);
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px;
+        border-bottom: 3px solid var(--line);
+        background: #fff;
+      }
+
+      .panel-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 900;
+      }
+
+      .counter {
+        padding: 4px 8px;
+        border: 2px solid var(--line);
+        background: var(--blue);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .map-list {
+        display: grid;
+        gap: 0;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .node {
+        position: relative;
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+        min-height: 70px;
+        padding: 14px 14px;
+        border: 0;
+        border-bottom: 2px solid var(--line);
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .node:last-child {
+        border-bottom: 0;
+      }
+
+      .node:hover,
+      .node.active {
+        background: #fff;
+      }
+
+      .node.active::before {
+        content: "";
+        position: absolute;
+        inset: 8px auto 8px 0;
+        width: 7px;
+        background: var(--red);
+      }
+
+      .node-number {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border: 2px solid var(--line);
+        background: var(--yellow);
+        font-weight: 900;
+      }
+
+      .node.active .node-number {
+        background: var(--teal);
+      }
+
+      .node-label {
+        display: block;
+        font-weight: 900;
+        line-height: 1.25;
+      }
+
+      .node-en {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+      }
+
+      .concept {
+        min-height: 640px;
+      }
+
+      .concept-body {
+        padding: 24px;
+      }
+
+      .stamp {
+        display: inline-flex;
+        margin-bottom: 16px;
+        padding: 7px 10px;
+        border: 2px solid var(--line);
+        background: var(--red);
+        color: #fff;
+        font-family: "Courier New", monospace;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .concept h2 {
+        margin: 0 0 12px;
+        font-family: Georgia, "Songti SC", serif;
+        font-size: clamp(30px, 4vw, 56px);
+        line-height: 1.02;
+      }
+
+      .thesis {
+        margin: 0 0 22px;
+        padding: 16px;
+        border: 3px solid var(--line);
+        background: #fff;
+        box-shadow: 6px 6px 0 var(--line);
+        font-size: clamp(18px, 2vw, 24px);
+        font-weight: 900;
+        line-height: 1.45;
+      }
+
+      .grid-two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .mini-card {
+        min-height: 170px;
+        padding: 16px;
+        border: 2px solid var(--line);
+        background: #fff;
+      }
+
+      .mini-card:nth-child(2) {
+        background: #e9fbf7;
+      }
+
+      .mini-card:nth-child(3) {
+        background: #fff1ea;
+      }
+
+      .mini-card:nth-child(4) {
+        background: #eef1ff;
+      }
+
+      .mini-title {
+        margin: 0 0 10px;
+        font-size: 14px;
+        font-weight: 900;
+      }
+
+      .mini-card p,
+      .mini-card ul {
+        margin: 0;
+        color: #312f2b;
+        line-height: 1.65;
+      }
+
+      .mini-card ul {
+        padding-left: 18px;
+      }
+
+      .keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .tag {
+        padding: 6px 9px;
+        border: 2px solid var(--line);
+        background: var(--yellow);
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .progress-wrap {
+        padding: 16px;
+      }
+
+      .progress-track {
+        height: 20px;
+        border: 2px solid var(--line);
+        background: #fff;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        width: 0%;
+        height: 100%;
+        background: repeating-linear-gradient(
+          45deg,
+          var(--teal),
+          var(--teal) 10px,
+          #56d8ce 10px,
+          #56d8ce 20px
+        );
+        transition: width 220ms ease;
+      }
+
+      .quiz {
+        display: grid;
+        gap: 10px;
+        padding: 0 16px 16px;
+      }
+
+      .check {
+        display: grid;
+        grid-template-columns: 24px 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 12px;
+        border: 2px solid var(--line);
+        background: #fff;
+        cursor: pointer;
+        line-height: 1.45;
+      }
+
+      .check input {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+        accent-color: var(--teal);
+      }
+
+      .summary {
+        margin: 0 16px 16px;
+        padding: 14px;
+        border: 2px solid var(--line);
+        background: #171717;
+        color: #fff;
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .toast {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        transform: translateY(120px);
+        padding: 12px 14px;
+        border: 2px solid var(--line);
+        background: var(--teal);
+        box-shadow: 5px 5px 0 var(--line);
+        font-weight: 900;
+        transition: transform 200ms ease;
+        z-index: 10;
+      }
+
+      .toast.show {
+        transform: translateY(0);
+      }
+
+      @media (max-width: 1100px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .map-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .node {
+          border-right: 2px solid var(--line);
+        }
+
+        .node:nth-child(2n) {
+          border-right: 0;
+        }
+
+        .concept {
+          min-height: auto;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .app {
+          width: min(100vw - 18px, 680px);
+          padding-top: 14px;
+        }
+
+        .topbar {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .toolbar {
+          justify-content: flex-start;
+        }
+
+        .map-list,
+        .grid-two {
+          grid-template-columns: 1fr;
+        }
+
+        .node,
+        .node:nth-child(2n) {
+          border-right: 0;
+        }
+
+        .concept-body {
+          padding: 16px;
+        }
+
+        .panel {
+          box-shadow: 6px 6px 0 var(--line);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">Week 1 Proof-of-Work</span>
+          <h1>AI x Web3 基础能力地图</h1>
+        </div>
+        <div class="toolbar">
+          <button class="action primary" id="startBtn">开始复习</button>
+          <button class="action" id="copyBtn">复制打卡摘要</button>
+          <button class="action" id="resetBtn">重置进度</button>
+        </div>
+      </header>
+
+      <section class="layout" aria-label="AI x Web3 foundations map">
+        <nav class="panel" aria-label="知识地图">
+          <div class="panel-head">
+            <p class="panel-title">知识路线</p>
+            <span class="counter" id="nodeCounter">1 / 7</span>
+          </div>
+          <ul class="map-list" id="mapList"></ul>
+        </nav>
+
+        <article class="panel concept" aria-live="polite">
+          <div class="panel-head">
+            <p class="panel-title">概念卡片</p>
+            <span class="counter" id="sourceLabel">PPT -> Note -> Demo</span>
+          </div>
+          <div class="concept-body">
+            <span class="stamp" id="stamp">CONCEPT 01</span>
+            <h2 id="conceptTitle"></h2>
+            <p class="thesis" id="conceptThesis"></p>
+            <div class="grid-two">
+              <section class="mini-card">
+                <h3 class="mini-title">为什么重要</h3>
+                <p id="whyText"></p>
+              </section>
+              <section class="mini-card">
+                <h3 class="mini-title">新手误区</h3>
+                <p id="mistakeText"></p>
+              </section>
+              <section class="mini-card">
+                <h3 class="mini-title">AI x Web3 边界</h3>
+                <p id="boundaryText"></p>
+              </section>
+              <section class="mini-card">
+                <h3 class="mini-title">复习问题</h3>
+                <ul id="reviewList"></ul>
+              </section>
+            </div>
+            <div class="keywords" id="keywords"></div>
+          </div>
+        </article>
+
+        <aside class="panel" aria-label="自测清单">
+          <div class="panel-head">
+            <p class="panel-title">签名前自测</p>
+            <span class="counter" id="progressText">0 / 7</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+          <div class="quiz" id="quizList"></div>
+        </aside>
+      </section>
+    </main>
+    <div class="toast" id="toast">已复制</div>
+
+    <script>
+      const concepts = [
+        {
+          title: "AI 协作边界",
+          en: "human-in-the-loop",
+          thesis: "AI 可以加速理解和执行，但最终判断、验收和风险承担仍在人。",
+          why: "Web3 的错误成本更高，AI 生成的代码或步骤如果没有被理解，可能把复杂风险包装成看似可执行的方案。",
+          mistake: "把 AI 输出当成最终答案，或者认为能运行就等于正确。",
+          boundary: "AI 可以拆任务、写草稿、解释交易；GitHub push、WCB 提交、钱包签名和链上写入必须人工确认。",
+          questions: ["AI 能帮我做什么？", "哪些操作必须暂停？", "我能解释 AI 生成结果吗？"],
+          keywords: ["prompt", "workflow", "agent", "review", "human-in-the-loop"]
+        },
+        {
+          title: "Web3 工程系统",
+          en: "stricter distributed system",
+          thesis: "Web3 不是完全独立的新世界，而是更严格的分布式工程系统。",
+          why: "它仍然有前端、后端、风控、对账和运维，但一旦接入链上资产，错误更难回滚。",
+          mistake: "只把 Web3 理解成合约或钱包，忽略后端、状态同步、监控和安全流程。",
+          boundary: "AI 可以帮你画架构草图，但系统边界、失败路径和资产风险必须由人来判断。",
+          questions: ["Web2 支付和 Web3 支付哪里相似？", "Web3 为什么更严格？", "系统失败会影响什么？"],
+          keywords: ["distributed system", "payment flow", "risk", "settlement"]
+        },
+        {
+          title: "区块链状态机",
+          en: "shared state machine",
+          thesis: "区块链不是普通数据库，而是全球共享、确定执行、由共识维护的状态机。",
+          why: "智能合约调用不是普通 API 请求，而是在请求链上状态发生可验证变化。",
+          mistake: "把链上数据当成可以随意改写的数据库记录。",
+          boundary: "AI 可以解释交易想改变什么状态，但不能替你确认状态变化是否应该发生。",
+          questions: ["什么是旧状态到新状态？", "共识在确认什么？", "为什么交易需要签名？"],
+          keywords: ["state", "consensus", "smart contract", "transaction"]
+        },
+        {
+          title: "钱包与账户控制",
+          en: "wallet as account control",
+          thesis: "钱包不是存放资产的容器，而是控制私钥、签名、权限和链上交互入口的工具。",
+          why: "资产在链上，钱包证明你能控制某个账户并授权操作。",
+          mistake: "以为币存在钱包 App 里，或者把助记词当成普通登录密码。",
+          boundary: "AI 永远不应该接触助记词、私钥、keystore 密码或真实钱包恢复信息。",
+          questions: ["地址和私钥有什么区别？", "签名证明了什么？", "为什么测试钱包要独立？"],
+          keywords: ["wallet", "address", "private key", "seed phrase", "signature"]
+        },
+        {
+          title: "钱包安全风险",
+          en: "key / phishing / approve",
+          thesis: "钱包安全的第一道防线，是识别私钥泄露、签名欺骗和授权滥用。",
+          why: "私钥泄露和恶意授权都可能直接造成资产损失，而且通常不可逆。",
+          mistake: "看到钱包弹窗就点确认，或者为了省事长期无限授权。",
+          boundary: "AI 可以帮你生成签名前检查清单，但真实签名动作必须由你逐项确认。",
+          questions: ["Approve 授权给了谁？", "签名内容能看懂吗？", "这个网站可信吗？"],
+          keywords: ["phishing", "approve", "EIP-712", "permission", "revoke"]
+        },
+        {
+          title: "交易参数",
+          en: "Gas / Nonce / Data",
+          thesis: "Gas 是执行成本，Nonce 保护顺序，Data 承载合约调用指令。",
+          why: "理解交易参数，才能知道钱包弹窗背后到底在执行什么。",
+          mistake: "只看金额，不看目标地址、网络、Data 和授权对象。",
+          boundary: "AI 可以辅助解释 Data 和交易意图，但不能替你判断是否应该广播交易。",
+          questions: ["Gas 为什么会失败也消耗？", "Nonce 卡住会怎样？", "Data 为什么难读？"],
+          keywords: ["gas", "nonce", "data", "to", "value", "chainId"]
+        },
+        {
+          title: "架构师能力模型",
+          en: "architecture / debug / fundamentals",
+          thesis: "AI 时代的 Web3 开发者，要用 AI 放大系统理解力，而不是只追求生成代码。",
+          why: "当代码更容易生成，架构能力、Debug 能力和基础能力会更稀缺。",
+          mistake: "只学习工具调用，不补协议、状态、安全和工程常识。",
+          boundary: "Agent 是工具，系统掌控力仍然是开发者的最终防线。",
+          questions: ["我能解释系统失败原因吗？", "我知道哪些风险不可回滚吗？", "我能设计验证路径吗？"],
+          keywords: ["architecture", "debug", "fundamentals", "system thinking"]
+        }
+      ];
+
+      const checks = [
+        "我能说清 AI 能做什么、不能做什么",
+        "我能解释为什么 Web3 不是普通数据库",
+        "我能说明钱包为什么不是资产容器",
+        "我能区分 Gas、Nonce、Data",
+        "我知道签名前要检查哪些内容",
+        "我知道 Agent 不能替我做哪些链上操作",
+        "我能说出 Web3 开发者需要哪些架构能力"
+      ];
+
+      const state = {
+        active: 0,
+        checked: JSON.parse(localStorage.getItem("foundation-map-checks") || "[]")
+      };
+
+      const mapList = document.querySelector("#mapList");
+      const quizList = document.querySelector("#quizList");
+      const progressText = document.querySelector("#progressText");
+      const progressBar = document.querySelector("#progressBar");
+
+      function renderMap() {
+        mapList.innerHTML = concepts
+          .map((item, index) => `
+            <li>
+              <button class="node ${index === state.active ? "active" : ""}" data-index="${index}">
+                <span class="node-number">${index + 1}</span>
+                <span>
+                  <span class="node-label">${item.title}</span>
+                  <span class="node-en">${item.en}</span>
+                </span>
+              </button>
+            </li>
+          `)
+          .join("");
+      }
+
+      function renderConcept() {
+        const item = concepts[state.active];
+        document.querySelector("#nodeCounter").textContent = `${state.active + 1} / ${concepts.length}`;
+        document.querySelector("#stamp").textContent = `CONCEPT ${String(state.active + 1).padStart(2, "0")}`;
+        document.querySelector("#conceptTitle").textContent = item.title;
+        document.querySelector("#conceptThesis").textContent = item.thesis;
+        document.querySelector("#whyText").textContent = item.why;
+        document.querySelector("#mistakeText").textContent = item.mistake;
+        document.querySelector("#boundaryText").textContent = item.boundary;
+        document.querySelector("#reviewList").innerHTML = item.questions.map(q => `<li>${q}</li>`).join("");
+        document.querySelector("#keywords").innerHTML = item.keywords.map(k => `<span class="tag">${k}</span>`).join("");
+      }
+
+      function renderQuiz() {
+        quizList.innerHTML = checks
+          .map((label, index) => {
+            const checked = state.checked.includes(index);
+            return `
+              <label class="check">
+                <input type="checkbox" data-check="${index}" ${checked ? "checked" : ""} />
+                <span>${label}</span>
+              </label>
+            `;
+          })
+          .join("");
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const count = state.checked.length;
+        progressText.textContent = `${count} / ${checks.length}`;
+        progressBar.style.width = `${(count / checks.length) * 100}%`;
+        localStorage.setItem("foundation-map-checks", JSON.stringify(state.checked));
+      }
+
+      function showToast(text) {
+        const toast = document.querySelector("#toast");
+        toast.textContent = text;
+        toast.classList.add("show");
+        window.setTimeout(() => toast.classList.remove("show"), 1600);
+      }
+
+      function copySummary() {
+        const summary = `今天在昨天课程 PPT 笔记的基础上，做了一个交互式 HTML 学习工具：AI x Web3 基础能力地图。它把课程核心内容拆成 7 个可点击知识节点：AI 协作边界、Web3 工程系统、区块链状态机、钱包与账户控制、钱包安全风险、Web3 交易参数、架构师能力模型。这个 demo 的目标不是做展示页，而是把 Markdown 笔记进一步产品化成可复习、可自测、可沉淀的 proof-of-work。`;
+        navigator.clipboard.writeText(summary).then(
+          () => showToast("打卡摘要已复制"),
+          () => showToast("复制失败，请手动复制")
+        );
+      }
+
+      mapList.addEventListener("click", event => {
+        const button = event.target.closest("[data-index]");
+        if (!button) return;
+        state.active = Number(button.dataset.index);
+        renderMap();
+        renderConcept();
+      });
+
+      quizList.addEventListener("change", event => {
+        const input = event.target.closest("[data-check]");
+        if (!input) return;
+        const index = Number(input.dataset.check);
+        if (input.checked && !state.checked.includes(index)) state.checked.push(index);
+        if (!input.checked) state.checked = state.checked.filter(item => item !== index);
+        updateProgress();
+      });
+
+      document.querySelector("#startBtn").addEventListener("click", () => {
+        state.active = 0;
+        renderMap();
+        renderConcept();
+        document.querySelector(".concept").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      document.querySelector("#copyBtn").addEventListener("click", copySummary);
+
+      document.querySelector("#resetBtn").addEventListener("click", () => {
+        state.checked = [];
+        renderQuiz();
+        showToast("进度已重置");
+      });
+
+      renderMap();
+      renderConcept();
+      renderQuiz();
+    </script>
+  </body>
+</html>

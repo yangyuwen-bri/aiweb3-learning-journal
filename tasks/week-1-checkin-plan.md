@@ -1,7 +1,7 @@
 # Week 1 Daily Check-in Plan
 
-Date range: 2026-05-19 to 2026-05-25  
-Timezone: Asia/Shanghai  
+Date range: 2026-05-19 to 2026-05-25
+Timezone: Asia/Shanghai
 Status: draft plan, no platform submission performed by agent
 
 Context:
@@ -72,12 +72,13 @@ Proof artifact:
 
 - Web3 runtime note.
 - Transaction review checklist template.
+- Optional if completed early: Sepolia testnet faucet or transaction proof.
 
 Check-in draft angle:
 
 - Today I learned how wallet, signature, gas, transaction, and block explorer connect into one execution loop.
 - I created a signing / transaction review checklist.
-- I did not use any real wallet funds; future experiments will use testnet only.
+- I completed a low-risk Sepolia testnet faucet practice and did not use any real wallet funds.
 
 ## 2026-05-21 Thu - AI x Web3 Application Scenarios
 

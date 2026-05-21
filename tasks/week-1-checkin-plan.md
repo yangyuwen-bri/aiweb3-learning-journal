@@ -227,9 +227,15 @@ Check-in draft angle:
 
 - [x] 2026-05-18 check-in completed.
 - [x] 2026-05-19 Agent / Hermes note and check-in.
-- [ ] 2026-05-20 Web3 runtime note and check-in.
-- [ ] 2026-05-21 AI x Web3 application ideas and check-in.
+- [x] 2026-05-20 Web3 runtime note, Sepolia transaction task, and check-in.
+- [x] 2026-05-21 AI x Web3 application ideas, AI Concept Coach, and check-in draft.
 - [ ] 2026-05-22 Z.AI / Week 1 review note and check-in.
 - [ ] 2026-05-23 Agentic Economy note and check-in.
 - [ ] 2026-05-24 testnet prep or transaction proof and check-in.
 - [ ] 2026-05-25 Week 1 PoW Pack and check-in.
+
+## Task Submission Drafts
+
+- [x] Week 1｜Web3 向任务｜完成一笔测试网交易: submitted via WCB Agent API after human confirmation.
+- [x] Week 1｜前置准备｜完成课程工具准备: submitted via WCB Agent API after human confirmation. Draft/proof saved in `submissions/2026-05-21-tool-setup.md`.
+- [ ] Week 1｜AI 向任务｜完成 AI 可交互学习产物: AI Concept Coach implemented in `demos/ai-concept-coach/`; submission draft prepared in `submissions/2026-05-21-ai-concept-coach.md`.
